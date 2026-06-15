@@ -95,7 +95,7 @@ jobs:
         run: git apply ../*.patch
       - name: Install QEMU binfmt for loong64
         run: |
-          docker run --privileged --rm ghcr.io/loong64/binfmt --install all
+          docker run --privileged --name docker-builder --rm ghcr.io/loong64/binfmt --install all
       - name: Build base-images
         working-directory: base-images
         env:
