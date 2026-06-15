@@ -93,15 +93,15 @@ jobs:
       - name: Apply patches
         working-directory: base-images
         run: git apply ../*.patch
+      - name: Install QEMU binfmt for loong64
+        run: |
+          docker run --privileged --rm ghcr.io/loong64/binfmt --install all
       - name: Build base-images
         working-directory: base-images
         env:
           PLATFORM: "*.platform=linux/loong64"
           OUTPUT: "*.output=type=docker,rewrite-timestamp=true"
         run: |
-          echo "=== Build .builder ==="
-          make .builder
-          echo "=== Docker images after .builder ==="
           docker images
           echo "=== Build helper-ubuntu ==="
           make helper-ubuntu
