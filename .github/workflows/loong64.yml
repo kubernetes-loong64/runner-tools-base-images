@@ -96,6 +96,7 @@ jobs:
       - name: Build base-images
         working-directory: base-images
         env:
+          PLATFORM: "*.platform=linux/loong64"
           OUTPUT: "*.output=type=docker,rewrite-timestamp=true"
         run: |
           echo "=== Build .builder ==="
