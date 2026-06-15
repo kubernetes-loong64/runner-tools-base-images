@@ -96,4 +96,11 @@ jobs:
       - name: Build base-images
         working-directory: base-images
         run: |
+          echo "=== Build .builder ==="
           make .builder
+          echo "=== Docker images after .builder ==="
+          docker images
+          echo "=== Build helper-ubuntu ==="
+          make helper-ubuntu
+          echo "=== Docker images after helper-ubuntu ==="
+          docker images
