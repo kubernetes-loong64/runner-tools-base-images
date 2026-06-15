@@ -95,6 +95,8 @@ jobs:
       #  run: git apply ../*.patch
       - name: Build base-images
         working-directory: base-images
+        env:
+          OUTPUT: "*.output=type=docker,rewrite-timestamp=true"
         run: |
           echo "=== Build .builder ==="
           make .builder
