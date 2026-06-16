@@ -109,7 +109,7 @@ jobs:
           echo "=== Build helper-ubuntu completed ==="
           echo "=== Docker images after helper-ubuntu ==="
           docker images
-          IMAGE_REF=${{ env.KUBE_BASE_IMAGE_REGISTRY }}/runner-tools-base-images:${{ env.RUNNER_HELPER_BRANCH }}-debian
+          IMAGE_REF=${{ env.KUBE_BASE_IMAGE_REGISTRY }}/runner-tools-base-images-loong64:${{ env.RUNNER_HELPER_BRANCH }}-debian
           echo "IMAGE_REF=$IMAGE_REF"
           echo "IMAGE_REF=$IMAGE_REF" >> ${GITHUB_ENV}
           docker tag local/runner-helper:latest-ubuntu $IMAGE_REF
