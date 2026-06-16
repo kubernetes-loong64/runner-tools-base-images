@@ -12,12 +12,18 @@ index 1fe97dc..bc81c35 100644
  .PHONY: helper-alpine-latest
  helper-alpine-latest:
 diff --git a/dockerfiles/runner-helper/Dockerfile.ubuntu b/dockerfiles/runner-helper/Dockerfile.ubuntu
-index 25deb93..1d84e88 100644
+index 25deb93..8240457 100644
 --- a/dockerfiles/runner-helper/Dockerfile.ubuntu
 +++ b/dockerfiles/runner-helper/Dockerfile.ubuntu
-@@ -1,4 +1,4 @@
+@@ -1,9 +1,9 @@
 -FROM ubuntu
 +FROM lcr.loongnix.cn/debian:14
  
  # gitlab-runner-helper will try to resolve `sh` from the path. We ensure the PATH is populated by default, as some container runtimes do no longer set a default (e.g. containerd v1.2.8)
  ENV PATH="${PATH:-/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin}"
+ 
+-RUN apt-get update && apt-get install -y bash ca-certificates git git-lfs dumb-init && \
++RUN apt-get update && apt-get install -y --no-install-recommends bash ca-certificates git git-lfs dumb-init && \
+     rm -rf /var/lib/apt/lists/*
+ 
+ RUN git lfs install --skip-repo
