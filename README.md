@@ -1,4 +1,24 @@
+## gitlab-runner-helper base images
+
 <p align="center"><a href="README.md">English</a> | <a href="README-zh.md">中文</a></p>
+
+## Overview
+
+This project builds base images for GitLab Runner on the **loong64** (LoongArch) architecture. It is a submodule of the [kubernetes-loong64](https://github.com/kubernetes-loong64) project.
+
+The upstream base-images project ([gitlab-org/ci-cd/runner-tools/base-images](https://gitlab.com/gitlab-org/ci-cd/runner-tools/base-images)) targets `linux/amd64`. This repository patches the upstream to produce `linux/loong64` images, using **Debian 14** (from `lcr.loongnix.cn`) as the base instead of Ubuntu.
+
+[![kubernetesloong64/runner-tools-base-images-loong64](https://img.shields.io/docker/v/kubernetesloong64/runner-tools-base-images-loong64?logo=docker&label=kubernetesloong64%2Frunner-tools-base-images-loong64)](https://hub.docker.com/r/kubernetesloong64/runner-tools-base-images-loong64/tags)
+
+## Branches
+
+| Branch            | Description                                                         |
+|-------------------|---------------------------------------------------------------------|
+| `main`            | Project documentation, license, and shared configuration            |
+| `loong64-v0.0.43` | Patched build for upstream base-images v0.0.43 with loong64 support |
+
+New loong64 release branches follow the naming convention `loong64-<upstream-version>`.
+
 
 ## Verifying releases
 
