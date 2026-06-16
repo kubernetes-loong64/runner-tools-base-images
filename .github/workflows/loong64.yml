@@ -41,10 +41,10 @@ jobs:
           echo "RAW_VERSION=$RAW_VERSION"
           echo "RAW_VERSION=$RAW_VERSION" >> ${GITHUB_ENV}
           echo "RAW_VERSION=$RAW_VERSION" >> ${GITHUB_OUTPUT}
-          GITLAB_RUNNER_BRANCH=$(echo $RAW_VERSION | awk -F'+' '{print $1}')
-          echo "GITLAB_RUNNER_BRANCH=$GITLAB_RUNNER_BRANCH"
-          echo "GITLAB_RUNNER_BRANCH=$GITLAB_RUNNER_BRANCH" >> ${GITHUB_ENV}
-          echo "GITLAB_RUNNER_BRANCH=$GITLAB_RUNNER_BRANCH" >> ${GITHUB_OUTPUT}
+          RUNNER_HELPER_BRANCH=$(echo $RAW_VERSION | awk -F'+' '{print $1}')
+          echo "RUNNER_HELPER_BRANCH=$RUNNER_HELPER_BRANCH"
+          echo "RUNNER_HELPER_BRANCH=$RUNNER_HELPER_BRANCH" >> ${GITHUB_ENV}
+          echo "RUNNER_HELPER_BRANCH=$RUNNER_HELPER_BRANCH" >> ${GITHUB_OUTPUT}
           RELEASE=$(echo $RAW_VERSION | awk -F'+' '{print $2}')
           RELEASE=${RELEASE:-alpha.${{ github.run_number }}}
           echo "RELEASE=$RELEASE"
@@ -63,7 +63,7 @@ jobs:
           apt install -y git make golang file jq
       - name: Clone base-images
         run: |
-          git clone --branch ${{ env.GITLAB_RUNNER_BRANCH }} --depth 1 https://gitlab.com/gitlab-org/ci-cd/runner-tools/base-images.git base-images
+          git clone --branch ${{ env.RUNNER_HELPER_BRANCH }} --depth 1 https://gitlab.com/gitlab-org/ci-cd/runner-tools/base-images.git base-images
       - name: ls
         run: ls -lah
       - name: Install Docker CLI
@@ -102,8 +102,30 @@ jobs:
           PLATFORM: "*.platform=linux/loong64"
           OUTPUT: "*.output=type=docker,rewrite-timestamp=true"
         run: |
+          echo "=== Docker images before build ==="
           docker images
-          echo "=== Build helper-ubuntu ==="
+          echo "=== Build helper-ubuntu (debian base image for loong64) ==="
           make helper-ubuntu
+          echo "=== Build helper-ubuntu completed ==="
           echo "=== Docker images after helper-ubuntu ==="
           docker images
+          IMAGE_REF=${{ env.KUBE_BASE_IMAGE_REGISTRY }}/runner-helper:${{ env.RUNNER_HELPER_BRANCH }}-debian
+          docker tag local/runner-helper:latest-ubuntu $IMAGE_REF
+          echo "=== Saving $IMAGE_REF ==="
+          docker save -o base-images-loong64.tar $IMAGE_REF
+          echo "=== Image tarball ==="
+          ls -lha base-images-loong64.tar
+          echo "=== Manifest ==="
+          echo "--- repositories ---"
+          tar -xOf base-images-loong64.tar repositories
+          echo "--- manifest.json ---"
+          tar -xOf base-images-loong64.tar manifest.json | jq
+          echo "--- config ---"
+          tar -xOf base-images-loong64.tar $(tar -xOf base-images-loong64.tar manifest.json | jq -r '.[0].Config') | jq
+          echo "--- os, architecture ---"
+          tar -xOf base-images-loong64.tar $(tar -xOf base-images-loong64.tar manifest.json | jq -r '.[0].Config') | jq '{os, architecture}'
+      - name: Upload base-images image
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: runner-helper-loong64-images
+          path: base-images/base-images-loong64.tar
